@@ -12,7 +12,7 @@ name: Security — Tier C (reusable)
 #
 #   jobs:
 #     security:
-#       uses: rolliq-com/security/.github/workflows/tier-c.yml@<SHA>
+#       uses: rolliq-shared-infra/security/.github/workflows/tier-c.yml@<SHA>
 #       # no secrets needed
 #
 # The caller workflow must grant:

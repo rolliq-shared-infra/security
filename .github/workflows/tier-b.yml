@@ -23,7 +23,7 @@ name: Security — Tier B (reusable)
 #
 #   jobs:
 #     security:
-#       uses: rolliq-com/security/.github/workflows/tier-b.yml@<SHA>
+#       uses: rolliq-shared-infra/security/.github/workflows/tier-b.yml@<SHA>
 #       with:
 #         semgrep_config: 'p/python'   # adjust to match repo language
 #       # no secrets needed

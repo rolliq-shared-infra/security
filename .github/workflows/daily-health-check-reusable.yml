@@ -19,7 +19,7 @@ name: Daily health check (reusable)
 #
 #   jobs:
 #     health-check:
-#       uses: rolliq-com/security/.github/workflows/daily-health-check-reusable.yml@<SHA>
+#       uses: rolliq-shared-infra/security/.github/workflows/daily-health-check-reusable.yml@<SHA>
 #       with:
 #         dry_run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
 #       secrets:

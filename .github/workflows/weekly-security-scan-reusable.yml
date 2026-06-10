@@ -20,7 +20,7 @@ name: Weekly security scan (reusable)
 #
 #   jobs:
 #     weekly-scan:
-#       uses: rolliq-com/security/.github/workflows/weekly-security-scan-reusable.yml@<SHA>
+#       uses: rolliq-shared-infra/security/.github/workflows/weekly-security-scan-reusable.yml@<SHA>
 #       with:
 #         run_ai_review: ${{ github.event_name == 'workflow_dispatch' && inputs.run_ai_review || false }}
 #       secrets:

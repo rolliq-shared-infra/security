@@ -5,7 +5,7 @@ name: Adversarial review (reusable)
 # Caller pattern (the caller must trigger on `pull_request`):
 #   jobs:
 #     adversarial-review:
-#       uses: rolliq-com/security/.github/workflows/adversarial-review-reusable.yml@<SHA> # pin to immutable SHA
+#       uses: rolliq-shared-infra/security/.github/workflows/adversarial-review-reusable.yml@<SHA> # pin to immutable SHA
 #       secrets: inherit          # passes ANTHROPIC_API_KEY (and OPENAI_API_KEY)
 #       with:
 #         run-openai: true        # optional — second reviewer, default false

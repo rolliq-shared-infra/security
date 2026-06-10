@@ -31,7 +31,7 @@ name: Security — Tier A (reusable)
 #
 #   jobs:
 #     security:
-#       uses: rolliq-com/security/.github/workflows/tier-a.yml@<SHA>
+#       uses: rolliq-shared-infra/security/.github/workflows/tier-a.yml@<SHA>
 #       with:
 #         semgrep_config: 'p/python'
 #         run_openai: false
@@ -115,7 +115,7 @@ jobs:
   # alongside any breaking change to adversarial-review-reusable.yml.
   adversarial-review:
     if: github.event_name == 'pull_request'
-    uses: rolliq-com/security/.github/workflows/adversarial-review-reusable.yml@be6b1ec57a2e470d7f00ce58245c5039ac039091
+    uses: rolliq-shared-infra/security/.github/workflows/adversarial-review-reusable.yml@af921a61af8783adf780265d727d7aca0b3325f6
     with:
       run-openai: ${{ inputs.run_openai }}
     secrets:
