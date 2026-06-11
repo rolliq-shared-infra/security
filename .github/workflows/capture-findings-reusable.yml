@@ -1,0 +1,58 @@
+name: Capture security findings (reusable)
+
+# Reusable post-merge findings capture. Reviews the merged diff and files
+# HIGH/MEDIUM/LOW findings as tracked GitHub Issues — complementing the
+# CRITICAL gate that runs at PR time.
+#
+# Reviews only the merged diff (before...after) — never the full codebase —
+# so a given diff is reviewed exactly once and findings on unchanged code
+# are never re-sampled.
+#
+# Caller pattern (trigger on push to main):
+#
+#   on:
+#     push:
+#       branches: [main]
+#
+#   concurrency:
+#     group: capture-findings
+#     cancel-in-progress: false
+#
+#   jobs:
+#     capture:
+#       uses: rolliq-shared-infra/security/.github/workflows/capture-findings-reusable.yml@<SHA>
+#       secrets:
+#         ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+#
+# The caller workflow must grant:
+#   permissions:
+#     contents: read
+#     issues: write
+
+permissions: {}
+
+on:
+  workflow_call:
+    secrets:
+      ANTHROPIC_API_KEY:
+        required: true
+
+jobs:
+  capture:
+    name: Capture findings from merged diff
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - uses: rolliq-com/platform-iac/.github/actions/capture-findings@5798cd75c87f2acd1b24d11ed43d502e9121dd8c
+        with:
+          api-key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github-token: ${{ github.token }}
+          repo: ${{ github.repository }}
+          before-sha: ${{ github.event.before }}
+          after-sha: ${{ github.event.after }}
+          run-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
