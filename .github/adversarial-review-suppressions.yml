@@ -1,0 +1,46 @@
+# Canonical platform-wide suppressions for adversarial-review and capture-findings.
+# Applied automatically to every entity org repo that calls the reusable workflows
+# from infra-commons/security — no per-repo changes needed.
+#
+# Privacy rule: this file is in a PUBLIC repo. It MUST NOT contain any private repo
+# context (internal paths, names, emails, org-specific details). Those belong in each
+# private repo's own .github/adversarial-review-suppressions.yml.
+#
+# Format:
+#   - id: kebab-slug          # unique; canonical ids win over same-id repo-local entries
+#     pattern: "regex"        # matched against the finding's file path
+#     finding: "regex"        # matched against finding text (case-insensitive)
+#     reason: >              # why this is a false positive for this architecture
+#       Explanation.
+#     expires: YYYY-MM-DD    # omit for permanent architectural decisions
+
+suppressions:
+
+  # ── CI/CD supply-chain: SHA pins ─────────────────────────────────────────────
+  - id: sha-pin-first-party-workflows
+    pattern: ".*\\.github/workflows/.*\\.ya?ml$"
+    finding: "(external org commit hash|unpinned.{0,30}commit|commit hash without code visibility|[Uu]npinned external.*reusable)"
+    reason: >
+      Reusable workflows are intentionally pinned to immutable SHAs from first-party repos
+      (infra-commons/security and each entity org's own security repo). The SHA is the
+      supply-chain pin — these are not @main refs. infra-commons/security is public;
+      entity security repos are private first-party. Finding is a false positive for this
+      architecture.
+
+  # ── CI/CD supply-chain: security.yml push trigger ────────────────────────────
+  - id: security-push-trigger-intentional
+    pattern: ".*\\.github/workflows/security\\.ya?ml$"
+    finding: "(push.*triggers.*all branch|push.*including forks|push: ?\\{\\})"
+    reason: >
+      The security.yml push: {} trigger runs security scans on all branch pushes by design
+      for immediate feedback. All entity org repos are private with branch protection —
+      fork exposure does not apply. Intentional design decision.
+
+  # ── CI/CD permissions: issues:write on adversarial-review job ────────────────
+  - id: issues-write-adversarial-review-intentional
+    pattern: ".*\\.github/workflows/.*\\.ya?ml$"
+    finding: "(issues.*write.*without.*justification|added.*issues.*write.*adversarial|issues.*write.*permission.*adversarial)"
+    reason: >
+      The adversarial-review job requires issues: write so the gate job can open a tracking
+      issue when CRITICAL findings are found. This permission is documented in the reusable
+      workflow caller pattern and is the minimum required scope.
