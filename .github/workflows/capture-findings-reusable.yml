@@ -20,7 +20,7 @@ name: Capture security findings (reusable)
 #
 #   jobs:
 #     capture:
-#       uses: rolliq-shared-infra/security/.github/workflows/capture-findings-reusable.yml@<SHA>
+#       uses: infra-commons/security/.github/workflows/capture-findings-reusable.yml@<SHA>
 #       secrets:
 #         ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
 #
@@ -48,7 +48,7 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - uses: rolliq-com/platform-iac/.github/actions/capture-findings@5798cd75c87f2acd1b24d11ed43d502e9121dd8c
+      - uses: infra-commons/security/.github/actions/capture-findings@main
         with:
           api-key: ${{ secrets.ANTHROPIC_API_KEY }}
           github-token: ${{ github.token }}

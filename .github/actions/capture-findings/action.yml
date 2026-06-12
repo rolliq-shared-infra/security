@@ -1,0 +1,52 @@
+name: Capture security findings on merge
+description: >-
+  Reviews the diff of a single merge to the default branch and files each
+  non-suppressed HIGH/MEDIUM/LOW finding as a tracked GitHub Issue. The
+  per-merge catch-all for findings the PR gate (CRITICAL-only) lets through.
+
+inputs:
+  api-key:
+    description: "Anthropic API key"
+    required: true
+  github-token:
+    description: "GitHub token with issues:write"
+    required: true
+  repo:
+    description: "owner/repo slug"
+    required: true
+  before-sha:
+    description: "Commit SHA before the push (github.event.before)"
+    required: true
+  after-sha:
+    description: "Commit SHA after the push (github.event.after)"
+    required: true
+  run-url:
+    description: "URL of the current workflow run"
+    required: true
+
+runs:
+  using: composite
+  steps:
+    # Full history so the script can diff before...after.
+    - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      with:
+        fetch-depth: 0
+
+    - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
+      with:
+        python-version: "3.12"
+
+    - name: Install dependencies
+      shell: bash
+      run: pip install anthropic==0.49.0 httpx==0.28.1 pyyaml==6.0.2
+
+    - name: Capture findings from the merged diff
+      shell: bash
+      env:
+        REVIEW_API_KEY: ${{ inputs.api-key }}
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        REPO: ${{ inputs.repo }}
+        BEFORE_SHA: ${{ inputs.before-sha }}
+        AFTER_SHA: ${{ inputs.after-sha }}
+        RUN_URL: ${{ inputs.run-url }}
+      run: python "$GITHUB_ACTION_PATH/capture.py"
