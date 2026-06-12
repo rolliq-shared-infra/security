@@ -75,7 +75,7 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - uses: rolliq-com/platform-iac/.github/actions/daily-health-check@1db4bd14a246ec813eb3a0a3130e8c7efe222e3d
+      - uses: infra-commons/security/.github/actions/daily-health-check@main
         with:
           github-token:      ${{ github.token }}
           anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
