@@ -1,0 +1,49 @@
+name: Suppression expiry audit
+description: >-
+  Reads the adversarial-review suppressions YAML and files (or closes) a
+  GitHub Issue summarising expired and soon-to-expire entries. Wraps the
+  suppression-audit.py script that was previously duplicated across every
+  Rolliq solution repo.
+
+inputs:
+  github-token:
+    description: "GitHub token with issues:write"
+    required: true
+  repo:
+    description: "owner/repo slug"
+    required: true
+  run-url:
+    description: "Workflow-run URL to include in the issue body"
+    required: false
+    default: ""
+  suppressions-path:
+    description: >-
+      Path (relative to the working tree) of the suppressions file to audit.
+      Defaults to .github/adversarial-review-suppressions.yml. platform-iac's
+      audit-canonical workflow sets this explicitly to the same path to make
+      the target obvious in workflow logs.
+    required: false
+    default: ".github/adversarial-review-suppressions.yml"
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
+      with:
+        python-version: "3.12"
+        # No cache: pip — platform-iac has no requirements.txt / pyproject.toml, and the
+        # suppression-audit action installs only two lightweight packages that pip resolves
+        # in < 5 s. Caching against a missing dependency file causes setup-python to error.
+
+    - name: Install dependencies
+      shell: bash
+      run: pip install httpx==0.28.1 pyyaml==6.0.2
+
+    - name: Run suppression-audit.py
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        REPO: ${{ inputs.repo }}
+        RUN_URL: ${{ inputs.run-url }}
+        SUPPRESSIONS_PATH: ${{ inputs.suppressions-path }}
+      run: python "$GITHUB_ACTION_PATH/suppression-audit.py"
