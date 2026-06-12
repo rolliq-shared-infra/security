@@ -5,7 +5,7 @@ name: Adversarial review (reusable)
 # Caller pattern (the caller must trigger on `pull_request`):
 #   jobs:
 #     adversarial-review:
-#       uses: rolliq-shared-infra/security/.github/workflows/adversarial-review-reusable.yml@<SHA> # pin to immutable SHA
+#       uses: infra-commons/security/.github/workflows/adversarial-review-reusable.yml@<SHA> # pin to immutable SHA
 #       secrets: inherit          # passes ANTHROPIC_API_KEY (and OPENAI_API_KEY)
 #       with:
 #         run-openai: true        # optional — second reviewer, default false
@@ -173,14 +173,12 @@ jobs:
             echo "Tracking issue already open for PR #${PR_NUMBER} — skipping."
             exit 0
           fi
+          BODY=$(printf '%s\n\n%s\n\n%s\n\n---\n%s' \
+            "## Critical security findings — action required" \
+            "The adversarial AI security review identified **critical findings** on [PR #${PR_NUMBER}](${PR_URL}) that must be resolved before the PR can be merged." \
+            "**View findings:** See the adversarial review comment on [PR #${PR_NUMBER}](${PR_URL})." \
+            "_Created automatically by the \`adversarial-review / gate\` workflow. Close when the PR is updated and the gate passes._")
           gh issue create \
             --repo "$REPO" \
             --title "${TITLE}" \
-            --body "## Critical security findings — action required
-
-The adversarial AI security review identified **critical findings** on [PR #${PR_NUMBER}](${PR_URL}) that must be resolved before the PR can be merged.
-
-**View findings:** See the adversarial review comment on [PR #${PR_NUMBER}](${PR_URL}).
-
----
-_Created automatically by the \`adversarial-review / gate\` workflow. Close when the PR is updated and the gate passes._"
+            --body "$BODY"
